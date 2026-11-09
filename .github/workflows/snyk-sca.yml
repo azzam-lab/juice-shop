@@ -1,0 +1,36 @@
+name: DevSecOps — Snyk SCA
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master]
+
+jobs:
+  snyk-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Repo tidak punya package-lock.json, jadi npm ci tidak bisa dipakai
+      - name: Install dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      # Pipeline blocker: step ini gagal (exit code 1) jika ada HIGH/CRITICAL
+      - name: Snyk SCA Scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Snyk Monitor
+        if: always() && github.ref == 'refs/heads/master'
+        run: npx snyk monitor
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
