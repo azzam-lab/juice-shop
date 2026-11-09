@@ -1,0 +1,12 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JS-MARSDB-480405:
+    - '*':
+        reason: >-
+          Tidak ada versi perbaikan; Juice Shop adalah aplikasi latihan yang
+          sengaja rentan dan tidak dipakai di production
+        expires: 2027-06-30T00:00:00.000Z
+        created: 2026-11-09T06:47:19.712Z
+patch: {}
